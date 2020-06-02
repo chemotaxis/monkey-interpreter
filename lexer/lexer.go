@@ -56,10 +56,9 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 }
 
 func (lex *Lexer) readChar() {
-	if lex.readPosition >= len(lex.input) {
-		// 0 indicates end of file
-		lex.ch = 0
-	} else {
+	// 0 is a byte to indicate eof or no character
+	lex.ch = 0
+	if lex.readPosition < len(lex.input) {
 		lex.ch = lex.input[lex.readPosition]
 	}
 
