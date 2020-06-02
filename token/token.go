@@ -1,3 +1,7 @@
+/*
+Package token defines the token type and all the different types and keywords
+supported by the Monkey language.
+*/
 package token
 
 // TokenType represents a generic token
@@ -10,11 +14,10 @@ type Token struct {
 	Literal string
 }
 
-// Defining the various token types
+// Defining the various token types.  Update Lexer.nextToken() in lexer/lexer.go
 const (
 	ILLEGAL = "ILLEGAL"
-	// end of file
-	EOF = "EOF"
+	EOF     = "EOF" // end of file
 
 	// identifier or variable: foobar, x, y, etc.
 	IDENT = "IDENT"
@@ -38,6 +41,5 @@ const (
 
 	// keywords
 	FUNCTION = "FUNCTION"
-	// declares identifiers
-	LET = "LET"
+	LET      = "LET" // declares identifiers
 )
