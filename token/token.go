@@ -16,8 +16,13 @@ type Token struct {
 
 // Define keywords
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 // LookupIdent returns the token for either a keyword or an identifier
@@ -63,4 +68,9 @@ const (
 	// keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET" // declares identifiers
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
