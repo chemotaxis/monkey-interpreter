@@ -14,6 +14,20 @@ type Token struct {
 	Literal string
 }
 
+// Define keywords
+var keywords = map[string]TokenType{
+	"fn":  FUNCTION,
+	"let": LET,
+}
+
+// LookupIdent returns the token for either a keyword or an identifier
+func LookupIdent(ident string) TokenType {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+	return IDENT
+}
+
 // Defining the various token types.  Update Lexer.nextToken() in lexer/lexer.go
 const (
 	ILLEGAL = "ILLEGAL"
