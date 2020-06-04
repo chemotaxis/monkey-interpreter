@@ -17,9 +17,25 @@ func New(input string) *Lexer {
 	return lex
 }
 
+var whitespace = map[byte]struct{}{
+	' ':  {},
+	'\t': {},
+	'\n': {},
+	'\r': {},
+}
+
+func (lex *Lexer) skipWhitespace() {
+	for _, inSet := whitespace[lex.ch]; inSet; {
+		lex.readChar()
+		_, inSet = whitespace[lex.ch]
+	}
+}
+
 // NextToken returns the next token converted from Lexer.input
 func (lex *Lexer) NextToken() token.Token {
 	var tok token.Token
+
+	lex.skipWhitespace()
 
 	switch lex.ch {
 	case 0:
@@ -41,6 +57,17 @@ func (lex *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, lex.ch)
 	case '}':
 		tok = newToken(token.RBRACE, lex.ch)
+	default:
+		if isLetter(lex.ch) {
+			tok.Literal = lex.read(isLetter)
+			tok.Type = token.LookupIdent(tok.Literal)
+			return tok
+		} else if isDigit(lex.ch) {
+			tok.Literal = lex.read(isDigit)
+			tok.Type = token.INT
+			return tok
+		}
+		tok = newToken(token.ILLEGAL, lex.ch)
 	}
 
 	// advance lexer to next character, if available
@@ -48,11 +75,15 @@ func (lex *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token{
-		Type:    tokenType,
-		Literal: string(ch),
+// read returns the full string for a multi-character identifier or digit.  If
+// we didn't have this method, we would only get the first character of the
+// identifier or digit.
+func (lex *Lexer) read(boolFunc func(byte) bool) string {
+	position := lex.position
+	for boolFunc(lex.ch) {
+		lex.readChar()
 	}
+	return lex.input[position:lex.position]
 }
 
 func (lex *Lexer) readChar() {
@@ -64,4 +95,19 @@ func (lex *Lexer) readChar() {
 
 	lex.position = lex.readPosition
 	lex.readPosition++
+}
+
+func isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
+}
+
+func newToken(tokenType token.TokenType, ch byte) token.Token {
+	return token.Token{
+		Type:    tokenType,
+		Literal: string(ch),
+	}
 }
