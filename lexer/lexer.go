@@ -59,11 +59,11 @@ func (lex *Lexer) NextToken() token.Token {
 		tok = newToken(token.RBRACE, lex.ch)
 	default:
 		if isLetter(lex.ch) {
-			tok.Literal = lex.readIndentifier()
+			tok.Literal = lex.read(isLetter)
 			tok.Type = token.LookupIdent(tok.Literal)
 			return tok
 		} else if isDigit(lex.ch) {
-			tok.Literal = lex.readNumber()
+			tok.Literal = lex.read(isDigit)
 			tok.Type = token.INT
 			return tok
 		}
@@ -75,17 +75,12 @@ func (lex *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func (lex *Lexer) readIndentifier() string {
+// read returns the full string for a multi-character identifier or digit.  If
+// we didn't have this method, we would only get the first character of the
+// identifier or digit.
+func (lex *Lexer) read(boolFunc func(byte) bool) string {
 	position := lex.position
-	for isLetter(lex.ch) {
-		lex.readChar()
-	}
-	return lex.input[position:lex.position]
-}
-
-func (lex *Lexer) readNumber() string {
-	position := lex.position
-	for isDigit(lex.ch) {
+	for boolFunc(lex.ch) {
 		lex.readChar()
 	}
 	return lex.input[position:lex.position]
