@@ -51,14 +51,9 @@ func (lex *Lexer) NextToken() token.Token {
 		tok.Type = token.EOF
 	case '=':
 		tok = newToken(token.ASSIGN, lex.ch)
-		if lex.peekChar() == '=' {
-			ch := lex.ch
-			lex.readChar()
-			literal := string(ch) + string(lex.ch)
-			tok = token.Token{
-				Type:    token.EQ,
-				Literal: literal,
-			}
+		if isEqualSign(lex.peekChar()) {
+			tok.Type = token.EQ
+			tok.Literal = lex.read(isEqualSign)
 		}
 	case '+':
 		tok = newToken(token.PLUS, lex.ch)
@@ -74,14 +69,9 @@ func (lex *Lexer) NextToken() token.Token {
 		tok = newToken(token.GT, lex.ch)
 	case '!':
 		tok = newToken(token.BANG, lex.ch)
-		if lex.peekChar() == '=' {
-			ch := lex.ch
-			lex.readChar()
-			literal := string(ch) + string(lex.ch)
-			tok = token.Token{
-				Type:    token.NOT_EQ,
-				Literal: literal,
-			}
+		if isEqualSign(lex.peekChar()) {
+			tok.Type = token.NOT_EQ
+			tok.Literal = lex.readWithOffset(isEqualSign, 1)
 		}
 	case ';':
 		tok = newToken(token.SEMICOLON, lex.ch)
