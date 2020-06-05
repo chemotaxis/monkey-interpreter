@@ -105,11 +105,7 @@ func (lex *Lexer) NextToken() token.Token {
 
 // read returns a substring containing characters that satisfy boolFunc.
 func (lex *Lexer) read(boolFunc func(byte) bool) string {
-	position := lex.position
-	for boolFunc(lex.ch) {
-		lex.readChar()
-	}
-	return lex.input[position:lex.position]
+	return lex.readWithOffset(boolFunc, 0)
 }
 
 // readWithOffset returns a substring containing characters that satisfy
