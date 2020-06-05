@@ -24,6 +24,14 @@ var whitespace = map[byte]struct{}{
 	'\r': {},
 }
 
+func (lex *Lexer) peekChar() byte {
+	var chIndex byte // zero value is 0
+	if lex.readPosition < len(lex.input) {
+		chIndex = lex.input[lex.readPosition]
+	}
+	return chIndex
+}
+
 func (lex *Lexer) skipWhitespace() {
 	for _, inSet := whitespace[lex.ch]; inSet; {
 		lex.readChar()
@@ -43,8 +51,28 @@ func (lex *Lexer) NextToken() token.Token {
 		tok.Type = token.EOF
 	case '=':
 		tok = newToken(token.ASSIGN, lex.ch)
+		if isEqualSign(lex.peekChar()) {
+			tok.Type = token.EQ
+			tok.Literal = lex.read(isEqualSign)
+		}
 	case '+':
 		tok = newToken(token.PLUS, lex.ch)
+	case '-':
+		tok = newToken(token.MINUS, lex.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, lex.ch)
+	case '/':
+		tok = newToken(token.SLASH, lex.ch)
+	case '<':
+		tok = newToken(token.LT, lex.ch)
+	case '>':
+		tok = newToken(token.GT, lex.ch)
+	case '!':
+		tok = newToken(token.BANG, lex.ch)
+		if isEqualSign(lex.peekChar()) {
+			tok.Type = token.NOT_EQ
+			tok.Literal = lex.readWithOffset(isEqualSign, 1)
+		}
 	case ';':
 		tok = newToken(token.SEMICOLON, lex.ch)
 	case ',':
@@ -75,11 +103,23 @@ func (lex *Lexer) NextToken() token.Token {
 	return tok
 }
 
-// read returns the full string for a multi-character identifier or digit.  If
-// we didn't have this method, we would only get the first character of the
-// identifier or digit.
+// read returns a substring containing characters that satisfy boolFunc.
 func (lex *Lexer) read(boolFunc func(byte) bool) string {
 	position := lex.position
+	for boolFunc(lex.ch) {
+		lex.readChar()
+	}
+	return lex.input[position:lex.position]
+}
+
+// readWithOffset returns a substring containing characters that satisfy
+// boolFunc, except for possibly the first n characters specified by offset.
+func (lex *Lexer) readWithOffset(boolFunc func(byte) bool, offset int) string {
+	position := lex.position
+	for i := 0; i < offset; i++ {
+		lex.readChar()
+	}
+
 	for boolFunc(lex.ch) {
 		lex.readChar()
 	}
@@ -95,6 +135,10 @@ func (lex *Lexer) readChar() {
 
 	lex.position = lex.readPosition
 	lex.readPosition++
+}
+
+func isEqualSign(ch byte) bool {
+	return ch == '='
 }
 
 func isLetter(ch byte) bool {
