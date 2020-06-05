@@ -28,6 +28,21 @@ func TestNextToken(t *testing.T) {
 	tokenTester(input, tests, t)
 }
 
+func TestBangCase(t *testing.T) {
+	input := `10 == 10 != 9`
+
+	tests := []testToken{
+		{token.INT, "10"},
+		{token.EQ, "=="},
+		{token.INT, "10"},
+		{token.NOT_EQ, "!="},
+		{token.INT, "9"},
+		{token.EOF, ""},
+	}
+
+	tokenTester(input, tests, t)
+}
+
 func TestNextTokenMoreComplete(t *testing.T) {
 	input := `let five = 5;
 let ten = 10;
