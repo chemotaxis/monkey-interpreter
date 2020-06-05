@@ -113,11 +113,23 @@ func (lex *Lexer) NextToken() token.Token {
 	return tok
 }
 
-// read returns the full string for a multi-character identifier or digit.  If
-// we didn't have this method, we would only get the first character of the
-// identifier or digit.
+// read returns a substring containing characters that satisfy boolFunc.
 func (lex *Lexer) read(boolFunc func(byte) bool) string {
 	position := lex.position
+	for boolFunc(lex.ch) {
+		lex.readChar()
+	}
+	return lex.input[position:lex.position]
+}
+
+// readWithOffset returns a substring containing characters that satisfy
+// boolFunc, except for possibly the first n characters specified by offset.
+func (lex *Lexer) readWithOffset(boolFunc func(byte) bool, offset int) string {
+	position := lex.position
+	for i := 0; i < offset; i++ {
+		lex.readChar()
+	}
+
 	for boolFunc(lex.ch) {
 		lex.readChar()
 	}
@@ -133,6 +145,10 @@ func (lex *Lexer) readChar() {
 
 	lex.position = lex.readPosition
 	lex.readPosition++
+}
+
+func isEqualSign(ch byte) bool {
+	return ch == '='
 }
 
 func isLetter(ch byte) bool {
