@@ -24,6 +24,14 @@ var whitespace = map[byte]struct{}{
 	'\r': {},
 }
 
+func (lex *Lexer) peekChar() byte {
+	var chIndex byte // zero value is 0
+	if lex.readPosition < len(lex.input) {
+		chIndex = lex.input[lex.readPosition]
+	}
+	return chIndex
+}
+
 func (lex *Lexer) skipWhitespace() {
 	for _, inSet := whitespace[lex.ch]; inSet; {
 		lex.readChar()
@@ -43,6 +51,15 @@ func (lex *Lexer) NextToken() token.Token {
 		tok.Type = token.EOF
 	case '=':
 		tok = newToken(token.ASSIGN, lex.ch)
+		if lex.peekChar() == '=' {
+			ch := lex.ch
+			lex.readChar()
+			literal := string(ch) + string(lex.ch)
+			tok = token.Token{
+				Type:    token.EQ,
+				Literal: literal,
+			}
+		}
 	case '+':
 		tok = newToken(token.PLUS, lex.ch)
 	case '-':
@@ -57,6 +74,15 @@ func (lex *Lexer) NextToken() token.Token {
 		tok = newToken(token.GT, lex.ch)
 	case '!':
 		tok = newToken(token.BANG, lex.ch)
+		if lex.peekChar() == '=' {
+			ch := lex.ch
+			lex.readChar()
+			literal := string(ch) + string(lex.ch)
+			tok = token.Token{
+				Type:    token.NOT_EQ,
+				Literal: literal,
+			}
+		}
 	case ';':
 		tok = newToken(token.SEMICOLON, lex.ch)
 	case ',':
