@@ -1,3 +1,7 @@
+/*
+Package ast implements the abstract syntax tree for the Monkey programming
+language
+*/
 package ast
 
 import "monkey/token"
