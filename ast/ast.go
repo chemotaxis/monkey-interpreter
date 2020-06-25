@@ -25,6 +25,19 @@ type Expression interface {
 	expressionNode()
 }
 
+// Identifier represents a variable.
+type Identifier struct {
+	Token token.Token
+	Value string
+}
+
+func (i *Identifier) expressionNode() {}
+
+// TokenLiteral returns the text character used for this identifier.
+func (i *Identifier) TokenLiteral() string {
+	return i.Token.Literal
+}
+
 // Program represents the whole syntax tree for a program.
 type Program struct {
 	Statements []Statement
@@ -69,15 +82,5 @@ func (rs *ReturnStatement) TokenLiteral() string {
 	return rs.Token.Literal
 }
 
-// Identifier represents a variable.
-type Identifier struct {
-	Token token.Token
-	Value string
-}
 
-func (i *Identifier) expressionNode() {}
 
-// TokenLiteral returns the text character used for this identifier.
-func (i *Identifier) TokenLiteral() string {
-	return i.Token.Literal
-}
