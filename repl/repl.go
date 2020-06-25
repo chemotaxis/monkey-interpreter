@@ -19,10 +19,18 @@ func Start(in io.Reader, out io.Writer) {
 		fmt.Fprintf(out, PROMPT)
 		scanned := scanner.Scan()
 		if !scanned {
+			// Without this fmt.Println(), the terminal prompt stays on the same
+			// line as the repl prompt when exiting using ctrl+d or ctrl+c.
+			fmt.Println()
 			return
 		}
 
 		line := scanner.Text()
+
+		if line == "exit" {
+			return
+		}
+
 		lex := lexer.New(line)
 
 		for tok := lex.NextToken(); tok.Type != token.EOF; tok = lex.NextToken() {
