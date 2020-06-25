@@ -44,12 +44,29 @@ func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
 }
 
+// ReturnStatement represents a return statement (e.g. return <expression>).
+type ReturnStatement struct {
+	Token       token.Token
+	ReturnValue Expression
+}
+
+func (rs *ReturnStatement) statementNode() {}
+
+// TokenLiteral returns the actual text character used to represent the return
+// token.
+func (rs *ReturnStatement) TokenLiteral() string {
+	return rs.Token.Literal
+}
+
+// Identifier represents a variable.
 type Identifier struct {
 	Token token.Token
 	Value string
 }
 
 func (i *Identifier) expressionNode() {}
+
+// TokenLiteral returns the text character used to for this identifier.
 func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
