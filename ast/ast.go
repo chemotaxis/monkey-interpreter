@@ -82,5 +82,17 @@ func (rs *ReturnStatement) TokenLiteral() string {
 	return rs.Token.Literal
 }
 
+// ExpressionStatement represents a statement that evaluates to a value.  In
+// Monkey, an expression on its own line is perfectly acceptable (e.g. 1 + 3;).
+type ExpressionStatement struct {
+	Token      token.Token
+	Expression Expression
+}
 
+func (es *ExpressionStatement) statementNode() {}
 
+// TokenLiteral returns the text characters used to represent the expression
+// statement.
+func (es *ExpressionStatement) TokenLiteral() string {
+	return es.Token.Literal
+}
