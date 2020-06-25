@@ -58,12 +58,15 @@ func (rs *ReturnStatement) TokenLiteral() string {
 	return rs.Token.Literal
 }
 
+// Identifier represents a variable.
 type Identifier struct {
 	Token token.Token
 	Value string
 }
 
 func (i *Identifier) expressionNode() {}
+
+// TokenLiteral returns the text character used to for this identifier.
 func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
