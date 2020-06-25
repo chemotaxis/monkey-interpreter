@@ -4,11 +4,15 @@ language
 */
 package ast
 
-import "monkey/token"
+import (
+	"bytes"
+	"monkey/token"
+)
 
 // Node represents a node in the abstract syntax tree.
 type Node interface {
 	TokenLiteral() string
+	String() string
 }
 
 // Statement represents a statement.  Currently, there are only two types of
@@ -38,6 +42,11 @@ func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
 
+// String returns the string representation of the identifier.
+func (i *Identifier) String() string {
+	return i.Value
+}
+
 // Program represents the whole syntax tree for a program.
 type Program struct {
 	Statements []Statement
@@ -51,6 +60,16 @@ func (p *Program) TokenLiteral() string {
 	}
 
 	return literal
+}
+
+// String returns a string representation of the program.
+func (p *Program) String() string {
+	var out bytes.Buffer
+
+	for _, s := range p.Statements {
+		out.WriteString(s.String())
+	}
+	return out.String()
 }
 
 // LetStatement represents the statement used to assign values to identifiers
@@ -68,6 +87,23 @@ func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
 }
 
+// String writes the let statement to a string.
+func (ls *LetStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String())
+	out.WriteString(" = ")
+
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}
+
 // ReturnStatement represents a return statement (e.g. return <expression>).
 type ReturnStatement struct {
 	Token       token.Token
@@ -80,6 +116,21 @@ func (rs *ReturnStatement) statementNode() {}
 // token.
 func (rs *ReturnStatement) TokenLiteral() string {
 	return rs.Token.Literal
+}
+
+// String returns string representation of the return statement.
+func (rs *ReturnStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(rs.TokenLiteral() + " ")
+
+	if rs.ReturnValue != nil {
+		out.WriteString(rs.ReturnValue.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
 }
 
 // ExpressionStatement represents a statement that evaluates to a value.  In
@@ -95,4 +146,13 @@ func (es *ExpressionStatement) statementNode() {}
 // statement.
 func (es *ExpressionStatement) TokenLiteral() string {
 	return es.Token.Literal
+}
+
+// String returns a string representation of the expression
+func (es *ExpressionStatement) String() string {
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
+
+	return ""
 }
