@@ -11,10 +11,18 @@ import (
 	"monkey/token"
 )
 
-// Parser parses tokens
+// These types are used to map tokens to the correct parse function depending on
+// the configuration of identifies relative to operators.
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
+
+// Parser parses tokens.  curToken points to the current token being parsed.
+// peekToken points to the next token in order to know what to do with curToken,
+// if needed.
 //
-// curToken points to the current token being parsed.  peekToken points to the
-// next token in order to know what to do with curToken, if needed.
+// prefixParseFns and infixParseFns map tokens to the parse function needed.
 type Parser struct {
 	l *lexer.Lexer
 
@@ -22,6 +30,17 @@ type Parser struct {
 	peekToken token.Token
 
 	errors []string
+
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
+}
+
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
 }
 
 // New creates a new Parser given a lexer
