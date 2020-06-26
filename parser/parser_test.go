@@ -59,7 +59,9 @@ let foobar = 838383;
 	}
 }
 
-// TestBadLetStatements tests what happens with bad source code
+// TestBadLetStatements tests what happens with bad source code.  Ideally, this
+// should pass when the test fails because the input source is invalid.  I
+// haven't figured that out yet.
 func TestBadLetStatements(t *testing.T) {
 	input := `
 let x 5;

@@ -1,6 +1,11 @@
 /*
 Package parser implements the parser for the Monkey programming language.  It is
-modeled after a Pratt parser
+modeled after a Pratt parser.
+
+To initialize:
+
+	p := New(lexer)
+	p.ParseProgram()
 */
 package parser
 
@@ -12,13 +17,13 @@ import (
 )
 
 // These types are used to map tokens to the correct parse function depending on
-// the configuration of identifies relative to operators.
+// the configuration of operands relative to operators.
 type (
 	prefixParseFn func() ast.Expression
 	infixParseFn  func(ast.Expression) ast.Expression
 )
 
-// Establish operator predence.  Using the iota keyword, each constant gets
+// Establish operator precedence.  Using the iota keyword, each constant gets
 // assigned an integer starting with 1 (the underscore takes the default value
 // of zero).
 const (
@@ -34,9 +39,8 @@ const (
 
 // Parser parses tokens.  curToken points to the current token being parsed.
 // peekToken points to the next token in order to know what to do with curToken,
-// if needed.
-//
-// prefixParseFns and infixParseFns map tokens to the parse function needed.
+// if needed.  prefixParseFns and infixParseFns map tokens to the parse function
+// needed.
 type Parser struct {
 	l *lexer.Lexer
 
@@ -57,7 +61,7 @@ func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 	p.infixParseFns[tokenType] = fn
 }
 
-// New creates a new Parser given a lexer
+// New creates a new Parser given a lexer.
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
 		l:      l,
