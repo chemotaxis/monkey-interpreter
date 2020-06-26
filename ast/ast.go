@@ -47,6 +47,24 @@ func (i *Identifier) String() string {
 	return i.Value
 }
 
+// IntegerLiteral represents a parsed integer.
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode() {}
+
+// TokenLiteral returns the text character used for the integer.
+func (il *IntegerLiteral) TokenLiteral() string {
+	return il.Token.Literal
+}
+
+// String returns the string representation of the integer.
+func (il *IntegerLiteral) String() string {
+	return il.Token.Literal
+}
+
 // Program represents the whole syntax tree for a program.
 type Program struct {
 	Statements []Statement
