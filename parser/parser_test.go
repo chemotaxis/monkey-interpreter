@@ -6,6 +6,22 @@ import (
 	"testing"
 )
 
+func checkParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+	nErrors := len(errors)
+	if nErrors == 0 {
+		return
+	}
+
+	t.Errorf("parser has %d errors", nErrors)
+
+	for _, msg := range errors {
+		t.Errorf("parser error: %q", msg)
+	}
+
+	t.FailNow()
+}
+
 func TestGoodLetStatements(t *testing.T) {
 	input := `
 let x = 5;
@@ -135,20 +151,4 @@ return 993322;
 				returnStmt.TokenLiteral())
 		}
 	}
-}
-
-func checkParserErrors(t *testing.T, p *Parser) {
-	errors := p.Errors()
-	nErrors := len(errors)
-	if nErrors == 0 {
-		return
-	}
-
-	t.Errorf("parser has %d errors", nErrors)
-
-	for _, msg := range errors {
-		t.Errorf("parser error: %q", msg)
-	}
-
-	t.FailNow()
 }
