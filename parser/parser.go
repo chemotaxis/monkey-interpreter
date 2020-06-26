@@ -18,6 +18,20 @@ type (
 	infixParseFn  func(ast.Expression) ast.Expression
 )
 
+// Establish operator predence.  Using the iota keyword, each constant gets
+// assigned an integer starting with 1 (the underscore takes the default value
+// of zero).
+const (
+	_ int = iota
+	LOWEST
+	EQUALS
+	LESSGREATER
+	SUM
+	PRODUCT
+	PREFIX
+	CALL
+)
+
 // Parser parses tokens.  curToken points to the current token being parsed.
 // peekToken points to the next token in order to know what to do with curToken,
 // if needed.
