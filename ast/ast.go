@@ -65,6 +65,34 @@ func (il *IntegerLiteral) String() string {
 	return il.Token.Literal
 }
 
+// PrefixExpression respresents a parsed prefix operator and its operand.  The
+// operand is always to the right of the prefix operator (e.g !isFull, -5).
+type PrefixExpression struct {
+	Token    token.Token
+	Operator string
+	Right    Expression
+}
+
+func (pe *PrefixExpression) expressionNode() {}
+
+// TokenLiteral returns the literal prefix operator
+func (pe *PrefixExpression) TokenLiteral() string {
+	return pe.Token.Literal
+}
+
+// String returns a string representation of the operator and its operand. For
+// example, (-5).
+func (pe *PrefixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(pe.Operator)
+	out.WriteString(pe.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
 // Program represents the whole syntax tree for a program.
 type Program struct {
 	Statements []Statement
