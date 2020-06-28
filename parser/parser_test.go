@@ -60,46 +60,6 @@ let foobar = 838383;
 	}
 }
 
-// TestBadLetStatements tests what happens with bad source code.  Ideally, this
-// should pass when the test fails because the input source is invalid.  I
-// haven't figured that out yet.
-func TestBadLetStatements(t *testing.T) {
-	input := `
-let x 5;
-let = 10;
-let 838383;
-`
-
-	l := lexer.New(input)
-	p := New(l)
-
-	program := p.ParseProgram()
-	checkParserErrors(t, p)
-	if program == nil {
-		t.Fatalf("ParseProgram() returned nil")
-	}
-
-	if len(program.Statements) != 3 {
-		t.Fatalf("program.Statements does not contain 3 statements. got=%d",
-			len(program.Statements))
-	}
-
-	tests := []struct {
-		expectedIdentifier string
-	}{
-		{"x"},
-		{"y"},
-		{"foobar"},
-	}
-
-	for i, tt := range tests {
-		stmt := program.Statements[i]
-		if !testLetStatement(t, stmt, tt.expectedIdentifier) {
-			return
-		}
-	}
-}
-
 // testLetStatement is a helper function to test fields in the LetStatement type
 func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 	if s.TokenLiteral() != "let" {
