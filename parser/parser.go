@@ -116,6 +116,22 @@ func (p *Parser) parseBoolean() ast.Expression {
 	}
 }
 
+// parseGroupedExpression checks whether we're at the end of the grouped
+// expression or we still need to parse more of the expression.  Precondition:
+// we have parsed the current token already.  Therefore, we move to the next
+// token before doing anything.
+func (p *Parser) parseGroupedExpression() ast.Expression {
+	p.nextToken()
+
+	exp := p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	return exp
+}
+
 func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
