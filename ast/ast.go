@@ -229,3 +229,22 @@ func (es *ExpressionStatement) String() string {
 
 	return ""
 }
+
+// Boolean is a boolean literal.  It can take the place of any expression
+// because it satisfies the Expression interface.
+type Boolean struct {
+	Token token.Token
+	Value bool
+}
+
+func (b *Boolean) expressionNode() {}
+
+// TokenLiteral returns the actual token used represent the boolean.
+func (b *Boolean) TokenLiteral() string {
+	return b.Token.Literal
+}
+
+// String returns the string representation of the boolean.
+func (b *Boolean) String() string {
+	return b.Token.Literal
+}
