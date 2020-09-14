@@ -117,6 +117,51 @@ func (p *Parser) parseBoolean() ast.Expression {
 	}
 }
 
+// parseIfExpression returns an IfExpression.  It currently only parses if
+// expressions without the optional else statement.
+func (p *Parser) parseIfExpression() ast.Expression {
+	expression := &ast.IfExpression{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+	expression.Condition = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	expression.Consequence = p.parseBlockStatement()
+
+	return expression
+}
+
+// parseBlockStatement returns a BlockStatement.  BlockStatements are delimited
+// by braces "{}".  It also returns when we reach the end of a file before we
+// reach a right brace "}".
+func (p *Parser) parseBlockStatement() *ast.BlockStatement {
+	block := &ast.BlockStatement{Token: p.curToken}
+	block.Statements = []ast.Statement{}
+
+	p.nextToken()
+
+	for !p.curTokenIs(token.RBRACE) && !p.curTokenIs(token.EOF) {
+		stmt := p.parseStatement()
+		if stmt != nil {
+			block.Statements = append(block.Statements, stmt)
+		}
+		p.nextToken()
+	}
+
+	return block
+}
+
 // parseGroupedExpression checks whether we're at the end of the grouped
 // expression or we still need to parse more of the expression.  Precondition:
 // we have parsed the current token already.  Therefore, we move to the next
