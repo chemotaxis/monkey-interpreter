@@ -118,8 +118,8 @@ func (p *Parser) parseBoolean() ast.Expression {
 	}
 }
 
-// parseIfExpression returns an IfExpression.  It currently only parses if
-// expressions without the optional else statement.
+// parseIfExpression returns an IfExpression.  It also parses an optional else
+// expression.
 func (p *Parser) parseIfExpression() ast.Expression {
 	expression := &ast.IfExpression{Token: p.curToken}
 
