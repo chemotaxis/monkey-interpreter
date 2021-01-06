@@ -35,6 +35,9 @@ func Start(in io.Reader, out io.Writer) {
 
 		for tok := lex.NextToken(); tok.Type != token.EOF; tok = lex.NextToken() {
 			fmt.Fprintf(out, "%+v\n", tok)
+		if line == "exit" {
+			fmt.Println()
+			return
 		}
 
 	}
