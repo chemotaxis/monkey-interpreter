@@ -7,6 +7,7 @@ import "fmt"
 // List of different objects supported in Monkey.
 const (
 	INTEGER_OBJ = "INTEGER"
+	BOOLEAN_OBJ = "BOOLEAN"
 )
 
 // ObjectType represents a value.  All types are represented as Objects.
@@ -31,4 +32,19 @@ func (i *Integer) Type() ObjectType {
 // Inspect returns a string representation of the Integer type.
 func (i *Integer) Inspect() string {
 	return fmt.Sprintf("%d", i.Value)
+}
+
+// Boolean represents true or false values.
+type Boolean struct {
+	Value bool
+}
+
+// Type returns the type of Boolean
+func (b *Boolean) Type() ObjectType {
+	return BOOLEAN_OBJ
+}
+
+// Inspect returns a string representation of the Boolean type.
+func (b *Boolean) Inspect() string {
+	return fmt.Sprintf("%t", b.Value)
 }
