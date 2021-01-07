@@ -8,6 +8,7 @@ import "fmt"
 const (
 	INTEGER_OBJ = "INTEGER"
 	BOOLEAN_OBJ = "BOOLEAN"
+	NULL_OBJ    = "NULL"
 )
 
 // ObjectType represents a value.  All types are represented as Objects.
@@ -47,4 +48,19 @@ func (b *Boolean) Type() ObjectType {
 // Inspect returns a string representation of the Boolean type.
 func (b *Boolean) Inspect() string {
 	return fmt.Sprintf("%t", b.Value)
+}
+
+// Null represents a missing value.  As mentioned in the text, the reason for
+// defining Null in the first place isn't so we can use it.  It's so that we
+// think twice before using it.
+type Null struct{}
+
+// Type returns the Null type
+func (n *Null) Type() ObjectType {
+	return NULL_OBJ
+}
+
+// Inspect returns the string representation of the Null type.
+func (n *Null) Inspect() string {
+	return "null"
 }
