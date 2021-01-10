@@ -1,5 +1,8 @@
 // Package evaluator tests the transformation from nodes in the ast into values
 // provided by the object package.
+//
+// Add tests to the end of the file.  Define the main test function first and
+// then the helper functions, if there are any for that test.
 package evaluator
 
 import (
