@@ -6,6 +6,13 @@ import (
 	"monkey/object"
 )
 
+var (
+	// Create "singleton" boolean values.  The book explains it as a small
+	// performance improvement since we only declare the boolean objects once.
+	TRUE  = &object.Boolean{Value: true}
+	FALSE = &object.Boolean{Value: false}
+)
+
 // Eval evaluates a node and returns the node's value or traverses to the next
 // expression to be evaluated.
 func Eval(node ast.Node) object.Object {
@@ -21,7 +28,10 @@ func Eval(node ast.Node) object.Object {
 		return &object.Integer{Value: node.Value}
 
 	case *ast.Boolean:
-		return &object.Boolean{Value: node.Value}
+		if node.Value {
+			return TRUE
+		}
+		return FALSE
 	}
 
 	return nil
