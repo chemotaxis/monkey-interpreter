@@ -11,6 +11,7 @@ var (
 	// performance improvement since we only declare the boolean objects once.
 	TRUE  = &object.Boolean{Value: true}
 	FALSE = &object.Boolean{Value: false}
+	NULL  = &object.Null{}
 )
 
 // Eval evaluates a node and returns the node's value or traverses to the next
