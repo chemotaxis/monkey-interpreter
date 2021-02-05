@@ -29,10 +29,7 @@ func Eval(node ast.Node) object.Object {
 		return &object.Integer{Value: node.Value}
 
 	case *ast.Boolean:
-		if node.Value {
-			return TRUE
-		}
-		return FALSE
+		return nativeBoolToBooleanObject(node.Value)
 
 	case *ast.PrefixExpression:
 		right := Eval(node.Right)
@@ -45,6 +42,15 @@ func Eval(node ast.Node) object.Object {
 	}
 
 	return nil
+}
+
+// nativeBoolToBooleanObject switches type to boolean object
+func nativeBoolToBooleanObject(input bool) *object.Boolean {
+	if input {
+		return TRUE
+	}
+
+	return FALSE
 }
 
 // evalStatements recursively evaluates each statement.  It returns the value of
