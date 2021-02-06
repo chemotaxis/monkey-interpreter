@@ -104,9 +104,17 @@ func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
 
 // evalInfixExpression evaluates all infix expressions
 func evalInfixExpression(operator string, left, right object.Object) object.Object {
+	// The order of cases matters.  For "==" and "!=", we are comparing
+	// singleton values of TRUE and FALSE.  This is not done for other objects.
+	// Therefore, we rule out all other operands before comparing boolean
+	// operands.
 	switch {
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
+	case operator == "==":
+		return nativeBoolToBooleanObject(left == right)
+	case operator == "!=":
+		return nativeBoolToBooleanObject(left != right)
 	default:
 		return NULL
 	}
