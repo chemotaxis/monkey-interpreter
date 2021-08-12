@@ -6,9 +6,10 @@ import "fmt"
 
 // List of different objects supported in Monkey.
 const (
-	INTEGER_OBJ = "INTEGER"
-	BOOLEAN_OBJ = "BOOLEAN"
-	NULL_OBJ    = "NULL"
+	INTEGER_OBJ      = "INTEGER"
+	BOOLEAN_OBJ      = "BOOLEAN"
+	NULL_OBJ         = "NULL"
+	RETURN_VALUE_OBJ = "RETURN_VALUE"
 )
 
 // ObjectType represents a value.  All types are represented as Objects.
@@ -63,4 +64,19 @@ func (n *Null) Type() ObjectType {
 // Inspect returns the string representation of the Null type.
 func (n *Null) Inspect() string {
 	return "null"
+}
+
+// ReturnValue wraps the value to return.
+type ReturnValue struct {
+	Value Object
+}
+
+// Type returns the Return type.
+func (rv *ReturnValue) Type() ObjectType {
+	return RETURN_VALUE_OBJ
+}
+
+// Inspect returns the string representation of the Return type.
+func (rv *ReturnValue) Inspect() string {
+	return rv.Value.Inspect()
 }
