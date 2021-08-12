@@ -20,7 +20,7 @@ func Eval(node ast.Node) object.Object {
 	switch node := node.(type) {
 
 	case *ast.Program:
-		return evalStatements(node.Statements)
+		return evalProgram(node)
 
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression)
@@ -45,7 +45,7 @@ func Eval(node ast.Node) object.Object {
 
 	// This evaluates the block statements in each branch of the if expression.
 	case *ast.BlockStatement:
-		return evalStatements(node.Statements)
+		return evalBlockStatement(node)
 
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue)
@@ -91,16 +91,35 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	return FALSE
 }
 
-// evalStatements recursively evaluates each statement.  It returns the value of
-// the last statement in the program.
-func evalStatements(stmts []ast.Statement) object.Object {
+// evalProgram evaluates statements until the end of the program or a return
+// object is encountered.
+func evalProgram(program *ast.Program) object.Object {
 	var result object.Object
 
-	for _, statement := range stmts {
+	for _, statement := range program.Statements {
 		result = Eval(statement)
 
 		if returnValue, ok := result.(*object.ReturnValue); ok {
 			return returnValue.Value
+		}
+	}
+
+	return result
+}
+
+// evalBlockStatement evaluates statements inside curly brackets.  It stops
+// evaluating statements if no more statements are available or a return object
+// is encountered.
+func evalBlockStatement(block *ast.BlockStatement) object.Object {
+	var result object.Object
+
+	for _, statement := range block.Statements {
+		result = Eval(statement)
+
+		//  Instead of unwrapping return objects, it returns the return object.
+		//  This return object gets unwrapped by evalProgram.
+		if result != nil && result.Type() == object.RETURN_VALUE_OBJ {
+			return result
 		}
 	}
 
